@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elinoy Excercise</title>
+</head>
+<body>
+    <script>
+        function performActionOnArray(array,callback) {
+    const resultArray = [];
+    for (let i = 0; i < array.length; i++) {
+      resultArray.push(callback(array[i]));
+    }
+    return resultArray;
+  }
+  
+  // Example callback function
+  function square(number) {
+    return number * number;
+  }
+  
+  // Example usage
+  const numbers = [1, 2, 3, 4];
+  const squaredNumbers = performActionOnArray(numbers, square);
+  
+  console.log(squaredNumbers);  // Output will be [1, 4, 9, 16]
+  
+  
+// הגדרת הפונקציה:
+// הפונקציה performActionOnArray מקבלת שני פרמטרים: array (המערך שעליו יבוצע הפעולה) ו-callback (הפונקציה שתופעל על כל אלמנט במערך).
+
+// לולאה דרך המערך:
+// היא משתמשת בלולאת for כדי לעבור על כל אחד מהאלמנטים במערך הקלט.
+
+// החלת ה-Callback:
+// בתוך הלולאה, היא מחילה את פונקציית ה-callback על כל אלמנט ושומרת את התוצאה בresultArray.
+
+// החזרת התוצאה:
+// לאחר עיבוד כל האלמנטים, היא מחזירה את המערך החדש resultArray שמכיל את תוצאות פונקציית ה-callback.
+
+// השימוש במנגנון הלולאה הבסיסי:
+// השיטה הזו משתמשת במנגנון הלולאה הבסיסי כדי להבטיח שליטה מלאה על תהליך החזרה ועיבוד האלמנטים, דבר שיכול להיות שימושי במיוחד אם תצטרך לשנות את הפונקציה הזו כדי להתמודד עם תרחישים מורכבים יותר בעתיד.
+
+
+
+const ethiopainResturant = {
+name:"Ethiofood",
+fieldSize:'200 square meters',
+dishes:['Meat','Kosher','Milk'],
+address:{
+  city:'Addis Ababa',
+  streetName:'kebele',
+  streetNumber:'12'
+},
+menu: [
+  {
+      type: 'Meat',
+      dishName: 'Injrera With Doro',
+      dishPrice: '20$'
+  },
+  {
+      type: 'Kosher',
+      dishName: 'Injrera With Shuro',
+      dishPrice: '15$'
+  },
+  {
+      type: 'Milk',
+      dishName: 'Bread With Cream',
+      dishPrice: '20$'
+  }
+],
+printMenu(){
+  console.log("Menu");
+  this.menu.forEach(dish => {
+    console.log(`${dish.type} - ${dish.dishName}: ${dish.dishPrice}`);
+});
+},
+
+printDetails(){
+  console.log(`name of resturant : ${this.name}`)
+  console.log(`field size  : ${this.fieldSize}`)
+  console.log(`dishes type : ${this.dishes}`)
+  console.log(`address = city : ${this.address.city} , streetName:${this.address.streetName}, streetNumber : ${this.address.streetNumber} `)
+}
+
+};
+
+ethiopainResturant.printMenu();
+ethiopainResturant.printDetails();
+
+ 
+    </script>
+</body>
+</html>

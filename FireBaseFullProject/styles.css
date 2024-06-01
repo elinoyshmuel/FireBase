@@ -1,0 +1,168 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+header {
+  border: 1px solid black;
+}
+body{
+   padding:2%;
+}
+header h1 {
+  display: inline-block;
+  text-align: end;
+  width: 30%;
+}
+.dashbox {
+  width: 65%;
+  text-align: end;
+  margin-left: auto;
+  padding:10px;
+}
+
+.dashbox,
+.dashbox > * {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: end;
+}
+
+img {
+  width: 30px;
+  height: 30px;
+  margin-inline: 15px;
+}
+
+#logout {
+  padding: 20px;
+  border: 1px solid black;
+  text-align: end;
+}
+ a {
+  text-decoration: none;
+}
+
+table{
+    text-align: center;
+    border:2px solid black;
+    margin: 20px auto;
+    padding:10px;
+    width:80%;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+
+th {
+    padding: 10px 25px;
+}
+.tasks{
+    margin:30px;
+}
+.shift {
+    padding:20px;
+    border:1px solid black;
+    display:inline-block;
+    margin:10px;
+} 
+
+
+
+
+
+/* App Styling  */
+#manageHeader{
+  text-wrap: nowrap;
+  padding-left:20px;
+}
+.updateDB,
+.deleteDB{
+  padding: 7px;
+  border: none;
+  border-radius: 5px;
+  margin-block: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.updateDB {
+  background-color: sandybrown;
+}
+
+.deleteDB {
+  background-color: red;
+}
+#addDB {
+ padding:0;
+ background-color:yellow;
+ border:none;
+ text-align: center;
+ color:black;
+ margin-block: 5px;
+ width:80%;
+}
+
+.bottom {
+  border-bottom: 1px solid black;
+}
+#shiftWrapper{
+  display: none;
+}
+
+#shiftForm{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width:80vw;
+  gap:20px;
+  margin:100px auto;
+}
+#formHeader{
+  font-size:3rem;
+}
+
+.saveContainer{
+  grid-column: 1 / span 2;
+  width:100%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  margin-top:100px;
+  gap:50px;
+}
+#SaveButton,#goBack{
+width:200px;
+height:25px;
+}
+#orderBy{
+  /* display: grid; */
+  grid-template-columns: repeat(4,minmax(150px,200px));
+ justify-content: center;
+ align-items: center;
+  margin:0 auto;
+  gap:20px;
+  display: none;
+}
+.orderBox{
+  border:1px solid black;
+  padding:20px;
+  
+}
+.orderBox >*{
+  text-align: center;
+}
+.orderBox p{
+  margin-top:15px;
+}
+
+/* .orderBox{
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding:2em;
+  border:1px solid black;
+} */

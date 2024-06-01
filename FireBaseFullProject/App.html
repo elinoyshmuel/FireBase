@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./styles.css" />
+  <title>User Page</title>
+</head>
+
+<body>
+
+  <header>
+    <h1 id="manageHeader">Manage My Shifts</h1>
+    <div class="dashbox">
+      <p id="WellcomeName"></p>
+      <img src="./assets/helpImg.svg" alt="">
+      <h2 id="logout"><a href="./Login.html">Logout</a></h2>
+    </div>
+  </header>
+
+  <div id="shiftWrapper">
+    <form action="" id="shiftForm">
+      <h1 id="formHeader">Add Shift</h1> <span id="howMuch">X more shifts for completeing the monthly challenge</span>
+      <label for="newSDT">Start Date & Time</label>
+      <input type="datetime-local" id="newSDT" required />
+      <label for="newEDT">End Date & Time</label>
+      <input type="datetime-local" id="newEDT" required />
+      <label for="newHourlySalary">Hourly Salary </label>
+      <input type="number" min="30" id="newHourlySalary" required />
+      <label for="newRole">Role</label>
+      <input type="text" id="newRole" required />
+      <label for="newBranch">Branch </label>
+      <input type="text" id="newBranch" required />
+
+      <div class="saveContainer">
+        <button id="SaveButton" type="submit"> Save </button>
+        <button id="goBack" onclick="location.reload()">Go Back</button>
+      </div>
+
+    </form>
+
+
+
+
+  </div>
+  <section id="content-section">
+
+    <div class="tasks">
+      <h3 class="shift shifts" id="toggleShift">Shifts</h3>
+      <h3 class="shift" id="addShift">Add Shift</h3>
+      <h3 class="shift edit">Edit Profile</h3>
+    </div>
+
+    <div id="orderBy">
+    </div>
+
+
+    <table id="shiftTable">
+      <tr>
+        <th>Start Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Hourly Amount</th>
+        <th>Role</th>
+        <th>Branch</th>
+        <th>Overall Salary</th>
+        <th>Actions</th>
+      </tr>
+
+      <tbody id="tbody">
+      </tbody>
+    </table>
+  </section>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDiZYQwwt-chgON8PWNE5zCJzi1yVnTHiQ",
+      authDomain: "usershifts-project.firebaseapp.com",
+      projectId: "usershifts-project",
+      storageBucket: "usershifts-project.appspot.com",
+      messagingSenderId: "167434287437",
+      appId: "1:167434287437:web:e0fa5fd5b682361f315f04",
+      measurementId: "G-0PE5GY4ZPN",
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const addRowBtn = document.getElementById('addShift');
+    const contentSection = document.getElementById("content-section");
+    const shiftForm = document.getElementById('shiftForm');
+    const shiftWrapper = document.getElementById('shiftWrapper');
+    const shiftsToggle = document.getElementById('toggleShift');
+
+
+
+    const navigate = (element, sec) => {
+      element.style.display = 'none';
+      sec.style.display = 'block';
+    }
+
+
+    async function populateShiftsTable() {
+      const tbody = document.getElementById("tbody");
+      try {
+        const querySnapshot = await getDocs(collection(db, "Shifts"));
+        if (querySnapshot) {
+          querySnapshot.forEach((doc, index) => {
+            const data = doc.data();
+            if (data.startDateTime && data.endDateTime && data.startDateTime.seconds && data.endDateTime.seconds) {
+              const startDate = new Date(data.startDateTime.seconds * 1000);
+              const endDate = new Date(data.endDateTime.seconds * 1000);
+              const newRow = document.createElement("tr");
+              newRow.id = `row-${index}`;
+              newRow.innerHTML = `
+            <td contenteditable="true">${startDate.toLocaleDateString()}</td>
+            <td contenteditable="true">${startDate.toLocaleTimeString()}</td>
+            <td contenteditable="true">${endDate.toLocaleTimeString()}</td>
+            <td contenteditable="true">${data.hourly_rate}</td>
+            <td contenteditable="true">${data.role}</td>
+            <td contenteditable="true">${data.branch}</td>
+            <td contenteditable="true">${(data.hourly_rate * Math.abs((endDate - startDate) / (1000 * 60 * 60))).toFixed(2)}</td>
+            <td>
+              <button class="updateDB" id="edit-${doc.id}">Edit</button>
+              <button class="deleteDB" id="delete-${doc.id}">Delete</button>
+            </td>
+          `;
+              tbody.appendChild(newRow);
+
+              document.getElementById(`edit-${doc.id}`).onclick = () => saveEdits(doc.id, index);
+              document.getElementById(`delete-${doc.id}`).onclick = () => deleteShift(doc.id);
+            } else {
+              console.log("Invalid or incomplete date data in document:", doc.id);
+            }
+          });
+        } else {
+          console.log("No shifts available");
+        }
+        console.log("Successfully extracted the shifts from Firebase");
+      } catch (error) {
+        console.error("Error getting shifts:", error);
+      }
+    }
+    populateShiftsTable();
+    addRowBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigate(contentSection, shiftWrapper);
+    });
+
+    async function countShifts() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "Shifts"));
+        const shiftCount = querySnapshot.size; // Gets the number of shifts
+        console.log(`Total number of shifts: ${shiftCount}`);
+        return shiftCount;
+      } catch (error) {
+        console.error("Error fetching shift count:", error);
+      }
+    }
+    const remainingShifts = await countShifts();
+    const remainingElement = document.getElementById('howMuch');
+    remainingElement.textContent = `${(20 - remainingShifts)} more shifts for completeing the monthly challenge`;
+    console.log(remainingShifts)
+
+    async function addNewShiftToDB() {
+      const parsedStartDateTime = document.getElementById('newSDT').value;
+      const parsedEndDateTime = document.getElementById('newEDT').value;
+      const startDateTime = new Date(parsedStartDateTime);
+      const endDateTime = new Date(parsedEndDateTime);
+      const startTime = startDateTime.getTime() * 1000;
+      const hourlySalary = parseFloat(document.getElementById('newHourlySalary').value);
+      const role = document.getElementById('newRole').value;
+      const branch = document.getElementById('newBranch').value;
+      const duration = (endDateTime - startDateTime) / (1000 * 60 * 60);
+      const totalEarnings = (hourlySalary * duration).toFixed(2);
+
+      const newShift = {
+        startDateTime,
+        startTime,
+        endDateTime,
+        hourly_rate: hourlySalary,
+        role,
+        branch,
+        overall_salary: Number(totalEarnings)
+      };
+
+      try {
+        await addDoc(collection(db, "Shifts"), newShift);
+        console.log("New shift added successfully");
+        alert("New shift added successfully");
+        if (contentSection.style.display == 'none')
+          setTimeout(() => {
+            navigate(shiftWrapper, contentSection);
+          }, 1500);
+
+      } catch (error) {
+        console.error("Error adding new shift:", error);
+      }
+    }
+
+    shiftForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
+       await addNewShiftToDB();
+     await  populateShiftsTable();
+      location.reload();
+    })
+
+
+
+    async function deleteShift(docId) {
+      try {
+        await deleteDoc(doc(db, "Shifts", docId));
+        console.log(`Document with ID ${docId} deleted successfully.`);
+        location.reload();
+        // Refresh the table
+      } catch (error) {
+        console.error(`Error deleting document: ${docId}`, error);
+      }
+    }
+
+    let greenLight = false;
+
+shiftsToggle.addEventListener('click', (e) => {
+  e.preventDefault();
+  const shiftTable = document.getElementById('shiftTable');
+  const orderDiv = document.getElementById("orderBy");
+  greenLight = !greenLight;
+  if (greenLight) {
+    shiftTable.style.display = 'none';
+    orderDiv.style.display = 'grid';
+  } else {
+    orderDiv.style.display = 'none';
+    shiftTable.style.display = 'table';
+  }
+});
+
+
+    async function saveEdits(docId, index) {
+      const row = document.getElementById(`row-${index}`);
+      const fields = Array.from(row.querySelectorAll('td[contenteditable="true"]'));
+      const updatedData = {
+        startDate: new Date(fields[0].innerText),
+        startTime: fields[1].innerText,
+        endTime: fields[2].innerText,
+        hourly_rate: parseFloat(fields[3].innerText),
+        role: fields[4].innerText,
+        branch: fields[5].innerText,
+        overall_salary: parseFloat(fields[6].innerText)
+      };
+
+      try {
+        await updateDoc(doc(db, "Shifts", docId), updatedData);
+        console.log(`Document with ID ${docId} updated successfully.`);
+        // location.reload();
+      } catch (error) {
+        console.error(`Error updating document: ${docId}`, error);
+      }
+    }
+
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const userId = document.querySelector('#WellcomeName');
+      const userStorage = localStorage.getItem('registrationData');
+
+      if (userStorage) {
+        const parserStorage = JSON.parse(userStorage).firstName;
+        userId.textContent = `Hi ${parserStorage}`;
+      } else {
+        console.log("User Not Logged In ! ")
+      }
+
+
+    });
+
+
+    function calculateAverageHourlySalary(shifts) {
+      const totalHourlyRate = shifts.reduce((total, shift) => total + shift.hourly_rate, 0);
+      return (totalHourlyRate / shifts.length).toFixed(2);
+    }
+
+    function calculateAverageShiftSalary(shifts) {
+      const totalEarnings = shifts.reduce((total, shift) => {
+        const durationHours = (new Date(shift.endDateTime).getTime() - new Date(shift.startDateTime).getTime()) / (1000 * 60 * 60);
+        return total + (shift.hourly_rate * durationHours);
+      }, 0);
+      return (totalEarnings / shifts.length).toFixed(2);
+    }
+    function findRoleWithMostShifts(shifts) {
+      const roleCounts = shifts.reduce((acc, shift) => {
+        acc[shift.branch] = (acc[shift.branch] || 0) + 1;
+        return acc;
+      }, {});
+      return Object.keys(roleCounts).reduce((a, b) => roleCounts[a] > roleCounts[b] ? a : b);
+    }
+    function sumOfThisMonthShifts(shifts) {
+      const currentMonth = new Date().getMonth();
+      const thisMonthShifts = shifts.filter(shift => new Date(shift.startDateTime).getMonth() === currentMonth);
+      const total = thisMonthShifts.reduce((total, shift) => {
+        const durationHours = (new Date(shift.endDateTime).getTime() - new Date(shift.startDateTime).getTime()) / (1000 * 60 * 60);
+        return total + (shift.hourly_rate * durationHours);
+      }, 0);
+      return total.toFixed(2);
+    }
+
+    function daysWorkerStrikeShifting(shifts) {
+      const workDays = new Set();
+      shifts.forEach(shift => {
+        const startDay = new Date(shift.startDateTime).toDateString();
+        workDays.add(startDay);
+      });
+
+      let totalDays = Array.from(workDays).sort((a, b) => new Date(a) - new Date(b));
+      let strikeDays = 0;
+      for (let i = 1; i < totalDays.length; i++) {
+        if ((new Date(totalDays[i]) - new Date(totalDays[i - 1])) / (1000 * 60 * 60 * 24) > 1) {
+          strikeDays++;
+        }
+      }
+      return strikeDays;
+    }
+
+    function findRoleWithMostSalary(shifts) {
+      const salaryByRole = {};
+
+      shifts.forEach(shift => {
+        if (shift.startDateTime && shift.endDateTime && shift.hourly_rate != null) {
+          const durationHours = (shift.endDateTime.getTime() - shift.startDateTime.getTime()) / (1000 * 60 * 60);
+          const earnings = shift.hourly_rate * durationHours;
+
+          if (salaryByRole[shift.role]) {
+            salaryByRole[shift.role] += earnings;
+          } else {
+            salaryByRole[shift.role] = earnings;
+          }
+        }
+      });
+
+      let maxSalaryRole = null;
+      let maxSalary = 0;
+
+      for (const role in salaryByRole) {
+        if (!maxSalaryRole || salaryByRole[role] > maxSalary) {
+          maxSalaryRole = role;
+          maxSalary = salaryByRole[role];
+        }
+      }
+
+      return maxSalaryRole;
+    }
+
+    async function fetchAndProcessShifts() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "Shifts"));
+        const shifts = [];
+        querySnapshot.forEach(doc => {
+          const shiftData = doc.data();
+          if (shiftData.startDateTime && shiftData.startDateTime.seconds && shiftData.endDateTime && shiftData.endDateTime.seconds) {
+            shiftData.startDateTime = new Date(shiftData.startDateTime.seconds * 1000);
+            shiftData.endDateTime = new Date(shiftData.endDateTime.seconds * 1000);
+            shifts.push(shiftData);
+          } else {
+            console.log("Invalid or missing date information in document:", doc.id);
+          }
+        });
+
+        if (shifts.length > 0) {
+          const avgHourlySalary = calculateAverageHourlySalary(shifts);
+          const avgShiftsSalary = calculateAverageShiftSalary(shifts);
+          const roleWithMostShifts = findRoleWithMostShifts(shifts);
+          const sumOfTheMonth = sumOfThisMonthShifts(shifts);
+          const daysStrikes = daysWorkerStrikeShifting(shifts);
+          const roleWithMostSalary = findRoleWithMostSalary(shifts);
+          const parentDiv = document.getElementById("orderBy");
+          parentDiv.innerHTML = `
+      <div class="orderBox"><h1>${avgHourlySalary}</h1><p style="color:gray;">Average Hourly Salary </p></div>
+      <div class="orderBox"><h1>${avgShiftsSalary}</h1><p style="color:gray;">Average Shift Salary </p></div>
+      <div class="orderBox"><h1>${roleWithMostShifts}</h1><p style="color:gray;">Branch with most shifts </p></div>
+      <div class="orderBox"><h1>${roleWithMostSalary}</h1><p style="color:gray;">Role with the most salary </p></div>
+      <div class="orderBox"><h1>${await countShifts()}</h1><p style="color:gray;"> Shifts this month</p></div>
+      <div class="orderBox"><h1>${daysStrikes}</h1><p style="color:gray;"> Days Strikes</p></div>
+    `;
+          console.log("Average Hourly Salary:", avgHourlySalary);
+          console.log("Average Shift Salary:", avgShiftsSalary);
+          console.log("Role with Most Shifts:", roleWithMostShifts);
+          console.log("Sum of This Month's Shifts:", sumOfTheMonth);
+          console.log("Days Worker Strike Shifting:", daysStrikes);
+          console.log("Role With The Most Salary:", roleWithMostSalary);
+        } else {
+          console.log("No valid shifts to process.");
+        }
+      } catch (error) {
+        console.error("Error getting shifts:", error);
+      }
+    }
+
+    fetchAndProcessShifts();
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+        }
+
+        .form-container {
+            width: 300px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="checkbox"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        label {
+            margin-top: 10px;
+        }
+
+        .booksList {
+            margin-top: 20px;
+        }
+
+        .booksList div {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        .editable {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .editable:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <h2>Add a New Book</h2>
+        <input type="text" id="title" placeholder="Title" required>
+        <input type="number" id="publishYear" placeholder="Publish Year" required> <input type="text" id="genres"
+            placeholder="Genres (comma-separated)" required>
+        <input type="number" step="0.1" id="rating" placeholder="Rating" required> <label
+            for="available">Available:</label>
+        <input type="checkbox" id="available">
+        <button id="addBookBtn">Add Book</button>
+    </div>
+    <div>
+        <button id="listBooksBtn">List All Books</button>
+        <div id="booksList" class="booksList"></div>
+    </div>
+
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { getFirestore, collection, getDocs,getDoc, doc, deleteDoc, updateDoc, addDoc, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDiZYQwwt-chgON8PWNE5zCJzi1yVnTHiQ",
+            authDomain: "usershifts-project.firebaseapp.com",
+            projectId: "usershifts-project",
+            storageBucket: "usershifts-project.appspot.com",
+            messagingSenderId: "167434287437",
+            appId: "1:167434287437:web:e0fa5fd5b682361f315f04",
+            measurementId: "G-0PE5GY4ZPN",
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+
+        const booksCollection = collection(db, "books");
+
+        const bookData1 = {
+            title: "Cosmos",
+            publishYear: 1980,
+            genres: ["Science", "Cosmology"], rating: 9.2,
+            available: true,
+        };
+        const bookData2 = {
+            title: "The Hobbit",
+            publishYear: 1937, genres: ["Fantasy"],
+            rating: 8.9,
+            available: false,
+        };
+        const bookData3 = {
+            title: "A Brief History of Time",
+            publishYear: 1988,
+            genres: ["Science", "Cosmology"],
+            rating: 9.1,
+            available: true,
+        };
+        const bookData4 = {
+            title: "1984",
+            publishYear: 1949,
+            genres: ["Fiction", "Dystopian"],
+            rating: 9.3,
+            available: true,
+        };
+        const bookData5 = {
+            title: "The Great Gatsby",
+            publishYear: 1925,
+            genres: ["Fiction", "Classic"],
+            rating: 8.2,
+            available: false,
+        };
+        const bookData6 = {
+            title: "To Kill a Mockingbird",
+            publishYear: 1960,
+            genres: ["Fiction", "Drama"],
+            rating: 8.7,
+            available: true,
+        };
+        const bookData7 = {
+            title: "Sapiens: A Brief History of Humankind",
+            publishYear: 2011,
+            genres: ["Non-Fiction", "History"],
+            rating: 9.0,
+            available: true,
+        };
+        const bookData8 = {
+            title: "Invisible Man",
+            publishYear: 1952,
+            genres: ["Fiction", "African American"],
+            rating: 8.5,
+            available: false,
+        }; const bookData9 = {
+            title: "Moby-Dick",
+            publishYear: 1851,
+            genres: ["Adventure", "Classic"],
+            rating: 8.3,
+            available: true,
+        }; const bookData10 = {
+            title: "War and Peace", publishYear: 1869,
+            genres: ["Historical", "Fiction"],
+            rating: 9.4,
+            available: true,
+        };
+        // await addDoc(booksCollection, bookData1);
+        // await addDoc(booksCollection, bookData2);
+        // await addDoc(booksCollection, bookData3);
+        // await addDoc(booksCollection, bookData4);
+        // await addDoc(booksCollection, bookData5);
+        // await addDoc(booksCollection, bookData6);
+        // await addDoc(booksCollection, bookData7);
+        // await addDoc(booksCollection, bookData8);
+        // await addDoc(booksCollection, bookData9);
+        // await addDoc(booksCollection, bookData10);
+       
+        // משימה 1  
+
+        await Promise.all([
+            addDoc(booksCollection, bookData1),
+            addDoc(booksCollection, bookData2),
+            addDoc(booksCollection, bookData3),
+            addDoc(booksCollection, bookData4),
+            addDoc(booksCollection, bookData5),
+            addDoc(booksCollection, bookData6),
+            addDoc(booksCollection, bookData7),
+            addDoc(booksCollection, bookData8),
+            addDoc(booksCollection, bookData9),
+            addDoc(booksCollection, bookData10),
+        ]);
+
+
+
+
+        // 1. שלפו את כל הספרים שהדירוג שלהם מעל 8.5
+        const highRatedBooks = query(booksCollection, where("rating", ">", 8.5));
+        getDocs(highRatedBooks).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 2. שלפו את כל הספרים שפורסמו בשנת 1952
+        const booksFrom1952 = query(booksCollection, where("publishYear", "==", 1952));
+        getDocs(booksFrom1952).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 3. שלפו את כל הספרים שפורסמו החל משנת 1952
+        const booksFrom1952Onwards = query(booksCollection, where("publishYear", ">=", 1952));
+        getDocs(booksFrom1952Onwards).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 4. שלפו את כל הספרים שלא זמינים בספרייה
+        const unavailableBooks = query(booksCollection, where("available", "==", false));
+        getDocs(unavailableBooks).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 5. שלפו את כל הספרים שמשתייכים לג'אנר "Fantasy"
+        const fantasyBooks = query(booksCollection, where("genres", "array-contains", "Fantasy"));
+        getDocs(fantasyBooks).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 6. שלפו את כל הספרים שמשתייכים לאחד מהג'אנרים "Fantasy" או "Fiction"
+        const fantasyOrFictionBooks = query(booksCollection, where("genres", "array-contains-any", ["Fantasy", "Fiction"]));
+        getDocs(fantasyOrFictionBooks).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 7. שלפו את הספרים שפורסמו בין 1960 ל-1980
+        const booksFrom1960To1980 = query(booksCollection, where("publishYear", ">=", 1960), where("publishYear", "<=", 1980));
+        getDocs(booksFrom1960To1980).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 8. שלפו את כל הספרים שהדירוג שלהם מעל 8.5 וגם פורסמו אחרי 1985
+        const highRatedRecentBooks = query(booksCollection, where("rating", ">", 8.5), where("publishYear", ">", 1985));
+        getDocs(highRatedRecentBooks).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 9. שלפו את כל הספרים שהדירוג שלהם מעל 9 וכרגע זמינים
+        const highRatedAvailableBooks = query(booksCollection, where("rating", ">", 9), where("available", "==", true));
+        getDocs(highRatedAvailableBooks).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 10. שלפו את כל הספרים שמשתייכים לג'אנר "Science" וגם כרגע זמינים
+        const availableScienceBooks = query(booksCollection, where("genres", "array-contains", "Science"), where("available", "==", true));
+        getDocs(availableScienceBooks).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 11. מצאו את 5 הספרים שמדורגים הכי גבוה
+        const topRatedBooks = query(booksCollection, orderBy("rating", "desc"), limit(5));
+        getDocs(topRatedBooks).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 12. מצאו את 3 הספרים הישנים ביותר
+        const oldestBooks = query(booksCollection, orderBy("publishYear"), limit(3));
+        getDocs(oldestBooks).then(snapshot => {
+            snapshot.forEach(doc => console.log(doc.data()));
+        });
+
+        // 13. מצאו את כמות הספרים שהציון שלהם גדול מ-8.5
+        const countHighRatedBooks = query(booksCollection, where("rating", ">", 8.5));
+        getDocs(countHighRatedBooks).then(snapshot => {
+            console.log("Number of books with a rating above 8.5: ", snapshot.size);
+        });
+
+        // 14. סכמו את הדירוג של כל הספרים שפורסמו אחרי 1990
+        const sumRatingsPost1990 = query(booksCollection, where("publishYear", ">", 1990));
+        getDocs(sumRatingsPost1990).then(snapshot => {
+            let totalRating = 0;
+            snapshot.forEach(doc => {
+                totalRating += doc.data().rating;
+            });
+            console.log("Total rating of books published after 1990: ", totalRating);
+        });
+
+        // 15. חישבו ממוצע של הדירוג לכל הספרים שזמינים
+        const averageRatingAvailableBooks = query(booksCollection, where("available", "==", true));
+        getDocs(averageRatingAvailableBooks).then(snapshot => {
+            let totalRating = 0;
+            let count = 0;
+            snapshot.forEach(doc => {
+                totalRating += doc.data().rating;
+                count++;
+            });
+            const averageRating = totalRating / count;
+            const averageRatingResult = averageRating.toFixed(2);
+            console.log("Average rating of available books: ", averageRatingResult);
+        });
+     
+
+          
+
+
+        //    משימה 2 
+
+    document.getElementById("addBookBtn").addEventListener("click", async () => {
+    const title = document.getElementById("title").value;
+    const publishYear = parseInt(document.getElementById("publishYear").value);
+    const genres = document.getElementById("genres").value.split(","); 
+    const rating = parseFloat(document.getElementById("rating").value);
+    const available = document.getElementById("available").checked; 
+
+    const bookData = {
+        title: title,
+        publishYear: publishYear,
+        genres: genres,
+        rating: rating,
+        available: available
+    };
+
+    try {
+        await addDoc(booksCollection, bookData);
+        alert("Book added successfully!");
+
+        document.getElementById("title").value = '';
+        document.getElementById("publishYear").value = '';
+        document.getElementById("genres").value = '';
+        document.getElementById("rating").value = '';
+        document.getElementById("available").checked = false;
+    } catch (error) {
+        console.error("Error adding book: ", error);
+        alert("Failed to add the book.");
+    }
+});
+
+
+
+// משימה 3 
+
+async function editBook(bookId) {
+
+    const bookConnection = doc(db, "books", bookId);
+    const bookDocSnapshot = await getDoc(bookConnection);
+
+    if (bookDocSnapshot.exists()) {
+        const bookData = bookDocSnapshot.data();
+        const newTitle = prompt("Enter new book title:", bookData.title);
+        const newYear = prompt("Enter new publish year:", bookData.publishYear);
+
+        if (newTitle && newYear) {
+            await updateDoc(bookConnection, {
+                title: newTitle,
+                publishYear: parseInt(newYear)
+            });
+            alert("Book updated successfully.");
+        } else {
+            alert("Update cancelled: Title or publish year was empty.");
+        }
+
+        document.getElementById("listBooksBtn").click();
+    } else {
+        alert("Book not found.");
+    }
+}
+
+
+// משימה 4 
+document.getElementById("listBooksBtn").addEventListener("click", async () => {
+    const booksCollectionRef = collection(db, "books");
+    const availableBooksQuery = query(booksCollectionRef, where("available", "==", true));
+
+    const querySnapshot = await getDocs(availableBooksQuery);
+    const booksList = document.getElementById("booksList");
+    booksList.innerHTML = ''; // Clear the list before adding new entries
+
+    querySnapshot.forEach((doc) => {
+        const book = doc.data();
+        const bookDiv = document.createElement("div");
+        // Ensure each book title span has a 'clickable-title' class and a data attribute 'data-id'
+        bookDiv.innerHTML = `<span class="clickable-title" data-id="${doc.id}">${book.title} - ${book.publishYear}</span>`;
+        booksList.appendChild(bookDiv);
+    });
+
+    if (querySnapshot.empty) {
+        booksList.textContent = "No available books found.";
+    }
+
+    // Attach click listeners to each book title
+    document.querySelectorAll('.clickable-title').forEach(item => {
+        item.addEventListener('click', () => editBook(item.getAttribute('data-id')));
+    });
+});
+
+
+
+    </script>
+</body>
+
+</html>

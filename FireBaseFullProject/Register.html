@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+          <title>Registration Page</title>
+          <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app-compat.js"></script>
+          <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore-compat.js"></script>
+          <script type="module" defer>
+              // Your Firebase configuration
+              import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js';
+              import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js';
+      
+                    const firebaseConfig = {
+                    apiKey: "AIzaSyDiZYQwwt-chgON8PWNE5zCJzi1yVnTHiQ",
+                    authDomain: "usershifts-project.firebaseapp.com",
+                    projectId: "usershifts-project",
+                    storageBucket: "usershifts-project.appspot.com",
+                    messagingSenderId: "167434287437",
+                    appId: "1:167434287437:web:e0fa5fd5b682361f315f04",
+                    measurementId: "G-0PE5GY4ZPN",
+                    };
+
+              // Initialize Firebase
+              
+              const app = initializeApp(firebaseConfig);
+              const db = getFirestore(app);
+      
+              window.addEventListener('DOMContentLoaded', () => {
+                  const form = document.getElementById('registrationForm');
+                  form.addEventListener('submit', async (e) => {
+                      e.preventDefault();
+      
+                      const firstName = document.getElementById('firstName').value;
+                      const lastName = document.getElementById('lastName').value;
+                      const email = document.getElementById('email').value;
+                      const age = document.getElementById('age').value;
+      
+                      const userData = { firstName, lastName, email, age };
+                      localStorage.setItem('registrationData', JSON.stringify(userData));
+      
+                      try {
+                          await setDoc(doc(db, 'UserLogin', 'yhDuR3Xkj6JfAV7gUgWm'), userData);
+                          alert('Registration successful!');
+                          window.location.href = './App.html';
+                      } catch (error) {
+                          console.error('Error saving data to Firebase:', error);
+                          alert('An error occurred while saving data.');
+                      }
+      
+                      form.reset();
+                  });
+              });
+          </script>
+    <style>
+
+      header{
+        margin: 100px auto;
+        text-align: center;
+      }
+      
+      #registrationForm{
+        border: 5px solid black;
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+      }
+  
+        
+    </style>
+  </head>
+
+  <body>
+    <header><h1>Register Page</h1></header>
+
+    <section>
+      
+          
+      </head>
+      <body>
+          <form id="registrationForm">
+              <label for="firstName">First Name:</label>
+              <input type="text" id="firstName" required><br>
+              <label for="lastName">Last Name:</label>
+              <input type="text" id="lastName" required><br>
+              <label for="email">Email:</label>
+              <input type="email" id="email" required><br>
+              <label for="age">Age:</label>
+              <input type="number" id="age" required><br>
+              <button type="submit">Register</button>
+          </form>
+      </body>
+      </html>
+    </section>
+
+    <script>
+      const form = document.getElementById("form");
+      const firstName = document.getElementById("firstName");
+      const lastName = document.getElementById("lastName");
+      const age = document.getElementById("age");
+      const userName = document.getElementById("userName");
+      const password = document.getElementById("password");
+      const Email = document.getElementById("email");
+    </script>
+  </body>
+</html>

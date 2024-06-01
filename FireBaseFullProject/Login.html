@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing: border-box;
+        }
+        body{
+            text-align: center;
+        }
+        section {
+            /* width:auto; */
+            margin:100px auto;
+            padding:100px;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap:15px;
+            border:2px solid black;
+        }
+        section h1 {
+            padding:15px;
+        }
+        #form {
+            padding : 30px;
+        }
+        #form > * {
+            display: block;
+        }
+        input{
+            margin:20px 0 30px;
+        }
+
+    </style>
+</head>
+<body>
+    
+
+    <section>
+        <h1>Login</h1>
+        <form id="form" action="">
+            <label for="username">UserName : </label>
+            <input type="text" name="username" id="username" required>
+            <label for="password">Password : </label>
+            <input type="password" name="password" id="password" required>
+            <div>
+                <p>not have an account ?<p> 
+                <p class="register"><a href="Register.html"> Register</a></p>
+                </div>
+        </form>
+    </section>
+
+
+
+    <script>
+        const userName = document.getElementById("username");
+        const password = document.getElementById("password");
+        const form = document.getElementById("form");
+
+        function onSubmit(){
+            // validation 
+            if(userName.value === '' || password.value ===''){
+                alert()
+            }
+        }
+
+           
+    </script>
+</body>
+</html>
